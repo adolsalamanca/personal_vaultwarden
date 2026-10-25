@@ -1,0 +1,34 @@
+{
+  "monitors": [
+    {
+      "name": "Vaultwarden",
+      "type": "http",
+      "url": "http://127.0.0.1:80",
+      "interval": 60
+    },
+    {
+      "name": "Container: tailscale",
+      "type": "docker_container",
+      "container": "tailscale",
+      "interval": 30
+    },
+    {
+      "name": "Container: vaultwarden",
+      "type": "docker_container",
+      "container": "vaultwarden",
+      "interval": 30
+    },
+    {
+      "name": "Container: uptime-kuma",
+      "type": "docker_container",
+      "container": "uptime-kuma",
+      "interval": 30
+    },
+    {
+      "name": "Heartbeat → Healthchecks.io",
+      "type": "http",
+      "url": "${HC_PING_URL}",
+      "interval": 60
+    }
+  ]
+}

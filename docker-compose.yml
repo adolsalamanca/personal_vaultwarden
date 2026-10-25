@@ -11,6 +11,8 @@ services:
       - ./tailscale/state:/var/lib/tailscale
       - ./tailscale/serve.json:/config/serve.json:ro
       - /dev/net/tun:/dev/net/tun
+    ports:
+      - "127.0.0.1:3001:3001"
     cap_add:
       - net_admin
       - sys_module
@@ -29,11 +31,12 @@ services:
     restart: unless-stopped
 
   uptime-kuma:
-    image: louislam/uptime-kuma@sha256:4b95dbe7ac5343b768f8e04e3035ccd59997872b1a35ab9b0f082d2cc279070e # v2.5.7
+    image: louislam/uptime-kuma@sha256:70233f4acb5163fd2a59a49909cf01e44415cecff13dba69e3a86647a2919f83 # v1.23.17
     container_name: uptime-kuma
     network_mode: service:tailscale
     depends_on:
       - tailscale
     volumes:
       - ./uptime-kuma-data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped

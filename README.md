@@ -39,6 +39,11 @@ In `.env` (replace `tskey-auth-xxxxxxxx` with the key from step 1.4, and `tail12
 TS_AUTHKEY=tskey-auth-xxxxxxxx
 TS_HOSTNAME=vault
 TAILNET_DOMAIN=tail1234ab.ts.net
+UPTIME_KUMA_USER=admin
+UPTIME_KUMA_PASSWORD=your_uptime_kuma_password
+TELEGRAM_BOT_TOKEN=your_bot_token
+TELEGRAM_CHAT_ID=your_chat_id
+HC_PING_URL=https://hc-ping.com/your-check-uuid
 ```
 
 In `vaultwarden.env`, generate the admin panel password hash:
@@ -63,6 +68,12 @@ mkdir -p tailscale/state vw-data uptime-kuma-data
 set -a && source .env && set +a && envsubst < tailscale/serve.json.template > tailscale/serve.json
 docker compose up -d
 docker compose logs -f tailscale   # wait until the machine appears as connected; Ctrl+C to exit
+```
+
+Then set up Uptime Kuma monitors (only needed once):
+
+```bash
+uv run setup-monitors.py
 ```
 
 The first time you open the web UI, Tailscale may take a few seconds to issue the certificate.
@@ -95,9 +106,12 @@ On mobile, keep **Tailscale always connected** so the app can sync.
 
 ## 7. Uptime Kuma
 
-Uptime Kuma runs alongside Vaultwarden and is accessible at `http://vault.<your-tailnet>.ts.net:3001` from any device on your tailnet. On first access, create an admin account.
+Uptime Kuma is accessible at `http://vault.<your-tailnet>.ts.net:3001` from any device on your tailnet. Monitors for Vaultwarden and all containers are created automatically by `setup-monitors.py` — no manual configuration needed.
 
-Add a monitor for your vault: **Add New Monitor → HTTP(s)** → URL: `https://vault.<your-tailnet>.ts.net`. Uptime Kuma will alert you if Vaultwarden goes down.
+Two alert types are configured automatically by `setup-monitors.py`:
+
+- **Service alerts (Telegram via Uptime Kuma)** — if vaultwarden or a container goes down, Uptime Kuma sends a Telegram message. Requires `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` in `.env`.
+- **Server-down alerts (Healthchecks.io → Telegram)** — Uptime Kuma pings Healthchecks.io every 60 seconds. If the server goes offline, the pings stop and Healthchecks.io sends a Telegram alert. Requires `HC_PING_URL` in `.env` and Telegram configured in your Healthchecks.io check.
 
 ## 8. Recommended
 
