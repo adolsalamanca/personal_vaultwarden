@@ -1,0 +1,6 @@
+.env
+vaultwarden.env
+tailscale/state/
+tailscale/serve.json
+vw-data/
+backups/
