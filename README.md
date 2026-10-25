@@ -1,6 +1,6 @@
 # Vaultwarden + Tailscale
 
-Self-hosted password manager for a family, compatible with official Bitwarden apps (Android, iOS, macOS, Windows, Linux, and browser extensions).
+Self-hosted password manager and uptime monitor for a family, compatible with official Bitwarden apps (Android, iOS, macOS, Windows, Linux, and browser extensions).
 
 - No port forwarding or domain purchase required.
 - Automatic valid HTTPS at `https://vault.<your-tailnet>.ts.net`.
@@ -10,7 +10,7 @@ Self-hosted password manager for a family, compatible with official Bitwarden ap
 
 | File | Purpose |
 |---|---|
-| `docker-compose.yml` | Defines the two containers (Tailscale + Vaultwarden) |
+| `docker-compose.yml` | Defines the three containers (Tailscale, Vaultwarden, Uptime Kuma) |
 | `.env` | Tailscale key and network name. **Must be filled in. Never commit this.** |
 | `vaultwarden.env` | Vaultwarden settings (registration, admin panel). **Must be filled in. Never commit this.** |
 | `tailscale/serve.json.template` | Template for the Tailscale HTTPS proxy config. Generated into `serve.json` at setup. |
@@ -59,7 +59,7 @@ DOMAIN=https://vault.tail1234ab.ts.net
 ## 3. Start
 
 ```bash
-mkdir -p tailscale/state vw-data
+mkdir -p tailscale/state vw-data uptime-kuma-data
 set -a && source .env && set +a && envsubst < tailscale/serve.json.template > tailscale/serve.json
 docker compose up -d
 docker compose logs -f tailscale   # wait until the machine appears as connected; Ctrl+C to exit
@@ -93,12 +93,18 @@ On the login screen of any app or extension:
 
 On mobile, keep **Tailscale always connected** so the app can sync.
 
-## 7. Recommended
+## 7. Uptime Kuma
+
+Uptime Kuma runs alongside Vaultwarden and is accessible at `http://vault.<your-tailnet>.ts.net:3001` from any device on your tailnet. On first access, create an admin account.
+
+Add a monitor for your vault: **Add New Monitor → HTTP(s)** → URL: `https://vault.<your-tailnet>.ts.net`. Uptime Kuma will alert you if Vaultwarden goes down.
+
+## 8. Recommended
 
 - **2FA for your vault**: Settings → Security → Two-step login. A stolen master password alone cannot open the vault without the second factor.
 - **Emergency access** between the two of you: Settings → Emergency access. This lets your partner request read access to your vault if you are unavailable, after a waiting period you define.
 
-## 8. Backups
+## 9. Backups
 
 ```bash
 chmod +x backup.sh
@@ -115,11 +121,11 @@ Keep an occasional copy **off this machine** (external drive or cloud). The data
 
 **Restore**: `docker compose down`, delete `vw-data`, extract the backup (`tar -xzf backups/vw-data_DATE.tar.gz`), then `docker compose up -d`.
 
-## 9. Updating (once a month)
+## 10. Updating (once a month)
 
 Images are pinned by digest in `docker-compose.yml`, so `docker compose pull` alone will not fetch updates. The process:
 
-1. Check for new releases: [vaultwarden](https://github.com/dani-garcia/vaultwarden/releases) and [Tailscale](https://github.com/tailscale/tailscale/releases).
+1. Check for new releases: [vaultwarden](https://github.com/dani-garcia/vaultwarden/releases), [Tailscale](https://github.com/tailscale/tailscale/releases), and [Uptime Kuma](https://github.com/louislam/uptime-kuma/releases).
 2. Pull the new image and get its digest:
    ```bash
    docker pull vaultwarden/server:NEW_VERSION
@@ -133,7 +139,7 @@ Images are pinned by digest in `docker-compose.yml`, so `docker compose pull` al
 
 Bitwarden apps update themselves and sometimes require a recent Vaultwarden version. If an app stops connecting, update first.
 
-## Troubleshooting
+## 11. Troubleshooting
 
 | Symptom | Solution |
 |---|---|

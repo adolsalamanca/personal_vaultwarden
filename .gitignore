@@ -3,4 +3,5 @@ vaultwarden.env
 tailscale/state/
 tailscale/serve.json
 vw-data/
+uptime-kuma-data/
 backups/

@@ -27,3 +27,13 @@ services:
     env_file:
       - vaultwarden.env
     restart: unless-stopped
+
+  uptime-kuma:
+    image: louislam/uptime-kuma@sha256:4b95dbe7ac5343b768f8e04e3035ccd59997872b1a35ab9b0f082d2cc279070e # v2.5.7
+    container_name: uptime-kuma
+    network_mode: service:tailscale
+    depends_on:
+      - tailscale
+    volumes:
+      - ./uptime-kuma-data:/app/data
+    restart: unless-stopped
