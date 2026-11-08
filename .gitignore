@@ -4,4 +4,5 @@ tailscale/state/
 tailscale/serve.json
 vw-data/
 uptime-kuma-data/
+caddy-data/
 backups/

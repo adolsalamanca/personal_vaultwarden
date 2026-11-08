@@ -18,12 +18,23 @@ services:
       - sys_module
     restart: unless-stopped
 
+  caddy:
+    image: caddy@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f # v2.11.7
+    container_name: caddy
+    network_mode: service:tailscale
+    depends_on:
+      - tailscale
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy-data:/data
+    restart: unless-stopped
+
   vaultwarden:
     image: vaultwarden/server:1.37.4@sha256:efb3cde962015fcc036b2ea625242248611943b27212ebf4392841fb30fad055 # v1.37.4
     container_name: vaultwarden
     network_mode: service:tailscale
     depends_on:
-      - tailscale
+      - caddy
     volumes:
       - ./vw-data:/data
     env_file:

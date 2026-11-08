@@ -25,6 +25,12 @@
       "interval": 30
     },
     {
+      "name": "Container: caddy",
+      "type": "docker_container",
+      "container": "caddy",
+      "interval": 30
+    },
+    {
       "name": "Heartbeat → Healthchecks.io",
       "type": "http",
       "url": "${HC_PING_URL}",

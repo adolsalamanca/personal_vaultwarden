@@ -1,0 +1,13 @@
+{
+    admin off
+}
+
+:80 {
+    handle /alerting {
+        redir https://healthchecks.io/projects/5aba6b97-a3cc-4085-ae5b-76f58beab315/checks/ 302
+    }
+
+    handle {
+        reverse_proxy localhost:8080
+    }
+}
