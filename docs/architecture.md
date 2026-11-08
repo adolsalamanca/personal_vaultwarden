@@ -36,5 +36,7 @@ Caddy does not manage certificates. Tailscale supplies them.
 | `monitors.json` | Uptime Kuma monitor definitions |
 | `setup-monitors.py` | Creates the monitors and alerts in Uptime Kuma |
 | `backup.sh` | Backup script |
+| `vaultwarden.service` | systemd unit: updates and starts the containers at boot |
+| `vaultwarden-update.service`, `vaultwarden-update.timer` | systemd units: restart `vaultwarden.service` every Monday |
 | `renovate.json` | Renovate configuration |
 | `.github/workflows/renovate.yaml` | Weekly Renovate run |

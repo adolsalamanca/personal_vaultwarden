@@ -1,0 +1,9 @@
+[Unit]
+Description=Restart Vaultwarden to deploy merged updates
+Requires=vaultwarden.service
+After=vaultwarden.service
+
+[Service]
+Type=oneshot
+# vaultwarden.service runs git pull and docker compose pull before it starts.
+ExecStart=/usr/bin/systemctl restart vaultwarden.service

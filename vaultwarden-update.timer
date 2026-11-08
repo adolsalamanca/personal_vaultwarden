@@ -1,0 +1,12 @@
+[Unit]
+Description=Weekly Vaultwarden update, after the Monday Renovate run
+
+[Timer]
+# Renovate runs every Monday at 05:17 UTC. This time is local time.
+OnCalendar=Mon *-*-* 08:13:00
+RandomizedDelaySec=10min
+# No catch-up after downtime: vaultwarden.service already updates at boot.
+Persistent=false
+
+[Install]
+WantedBy=timers.target
