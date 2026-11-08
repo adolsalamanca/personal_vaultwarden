@@ -10,7 +10,7 @@ Self-hosted password manager and uptime monitor for a family, compatible with of
 
 | File | Purpose |
 |---|---|
-| `docker-compose.yml` | Defines the three containers (Tailscale, Vaultwarden, Uptime Kuma) |
+| `docker-compose.yaml` | Defines the three containers (Tailscale, Vaultwarden, Uptime Kuma) |
 | `.env` | Tailscale key and network name. **Must be filled in. Never commit this.** |
 | `vaultwarden.env` | Vaultwarden settings (registration, admin panel). **Must be filled in. Never commit this.** |
 | `tailscale/serve.json.template` | Template for the Tailscale HTTPS proxy config. Generated into `serve.json` at setup. |
@@ -137,7 +137,7 @@ Keep an occasional copy **off this machine** (external drive or cloud). The data
 
 ## 10. Updating (once a month)
 
-Images are pinned by digest in `docker-compose.yml`, so `docker compose pull` alone will not fetch updates. The process:
+Images are pinned by digest in `docker-compose.yaml`, so `docker compose pull` alone will not fetch updates. The process:
 
 1. Check for new releases: [vaultwarden](https://github.com/dani-garcia/vaultwarden/releases), [Tailscale](https://github.com/tailscale/tailscale/releases), and [Uptime Kuma](https://github.com/louislam/uptime-kuma/releases).
 2. Pull the new image and get its digest:
@@ -145,7 +145,7 @@ Images are pinned by digest in `docker-compose.yml`, so `docker compose pull` al
    docker pull vaultwarden/server:NEW_VERSION
    docker inspect vaultwarden/server:NEW_VERSION --format '{{index .RepoDigests 0}}'
    ```
-3. Update the `image:` lines in `docker-compose.yml` with the new version tag and digest.
+3. Update the `image:` lines in `docker-compose.yaml` with the new version tag and digest.
 4. Apply:
    ```bash
    docker compose up -d
