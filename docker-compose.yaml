@@ -47,6 +47,9 @@ services:
     network_mode: service:tailscale
     depends_on:
       - tailscale
+    environment:
+      # Skips the database setup page on a fresh install.
+      - UPTIME_KUMA_DB_TYPE=sqlite
     volumes:
       - ./uptime-kuma-data:/app/data
       - /var/run/docker.sock:/var/run/docker.sock:ro

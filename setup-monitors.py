@@ -13,6 +13,7 @@ Reads credentials from .env. Safe to re-run: skips anything already configured.
 """
 import json
 import sys
+import threading
 import time
 import urllib.request
 from pathlib import Path
@@ -62,9 +63,36 @@ def main():
     with open("monitors.json") as f:
         config = json.load(f)
 
-    from uptime_kuma_api import UptimeKumaApi, MonitorType, DockerType, NotificationType
+    from uptime_kuma_api import UptimeKumaApi, UptimeKumaException, MonitorType, DockerType, NotificationType
 
-    api = UptimeKumaApi(url)
+    class Api(UptimeKumaApi):
+        """Waits for the first "info" event before the first call.
+
+        Uptime Kuma 2 registers its socket handlers only after it sends that event.
+        The server drops a call that arrives earlier, and the call then times out.
+        """
+
+        def connect(self):
+            ready = threading.Event()
+            handle_info = self.sio.handlers["/"]["info"]
+
+            def on_info(data):
+                ready.set()
+                handle_info(data)
+
+            self.sio.on("info", on_info)
+            super().connect()
+            if not ready.wait(self.timeout):
+                raise UptimeKumaException("Uptime Kuma sent no info event after connect")
+
+        def _build_monitor_data(self, *args, **kwargs):
+            # Uptime Kuma 2 stores monitor conditions in a NOT NULL column.
+            # This library predates it and does not send the field.
+            data = super()._build_monitor_data(*args, **kwargs)
+            data.setdefault("conditions", [])
+            return data
+
+    api = Api(url)
     try:
         # First-time setup creates the admin account; login works on subsequent runs
         try:
